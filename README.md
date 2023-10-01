@@ -22,18 +22,18 @@ _Or the code for the full tutorial (b2b ticket app)?_ \
 
 ## `packages/beth-stack`: Contains the `beth-stack` npm package
 
-- Handles custom jsx runtime + cache
-- Elysia Plugin
-- Script + Server for hot-reload
-- Turso api wrapper
+-   Handles custom jsx runtime + cache
+-   Elysia Plugin
+-   Script + Server for hot-reload
+-   Turso api wrapper
 
 ## `packages/create-beth-app`: Contains the `create-beth-app` npm package
 
-- Scaffolds a new BETH app
-- very much WIP
+-   Scaffolds a new BETH app
+-   very much WIP
 
 ## `www`: Contains the documentation website
 
-- TODO
+-   TODO
 
 # Contributions Welcome

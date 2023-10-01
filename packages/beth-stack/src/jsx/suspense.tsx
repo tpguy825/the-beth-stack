@@ -23,38 +23,35 @@ export const swapScript = `
 `;
 
 function isNotFulfilled(child: Promise<unknown>) {
-  return Bun.peek.status(child) !== "fulfilled";
+	return Bun.peek.status(child) !== "fulfilled";
 }
 
 export async function Suspense({
-  fallback,
-  children,
+	fallback,
+	children,
 }: {
-  fallback: JSX.Element;
-  children: JSX.Element | JSX.Element[];
+	fallback: JSX.Element;
+	children: JSX.Element | JSX.Element[];
 }): Promise<string> {
-  if (!Array.isArray(children))
-    throw new Error("children isnt array (shouldnt be possible)");
+	if (!Array.isArray(children)) throw new Error("children isnt array (shouldnt be possible)");
 
-  const hasAnyUnresolvedPromiseChildren = children.some(isNotFulfilled);
+	const hasAnyUnresolvedPromiseChildren = children.some(isNotFulfilled);
 
-  if (!hasAnyUnresolvedPromiseChildren) {
-    return children.join("");
-  }
+	if (!hasAnyUnresolvedPromiseChildren) {
+		return children.join("");
+	}
 
-  const suspended = Promise.all(children);
-  suspended.then((childrenContent) => {
-    setTimeout(() => {
-      const id = BETH_GLOBAL_RENDER_CACHE.dismissChild(children);
-      if (!id) {
-        BETH_GLOBAL_RENDER_CACHE.streamController?.error(
-          "Suspense children not found",
-        );
-        throw new Error("Suspense children not found");
-      }
-      const content = childrenContent.join("");
+	const suspended = Promise.all(children);
+	suspended.then((childrenContent) => {
+		setTimeout(() => {
+			const id = BETH_GLOBAL_RENDER_CACHE.dismissChild(children);
+			if (!id) {
+				BETH_GLOBAL_RENDER_CACHE.streamController?.error("Suspense children not found");
+				throw new Error("Suspense children not found");
+			}
+			const content = childrenContent.join("");
 
-      let withScript = `
+			let withScript = `
         <template id="N:${id}" data-replace>
             ${content}
         </template>
@@ -63,15 +60,15 @@ export async function Suspense({
         </script>
     `;
 
-      if (!BETH_GLOBAL_RENDER_CACHE.sentFirstChunk) {
-        withScript = swapScript + withScript;
-        BETH_GLOBAL_RENDER_CACHE.sentFirstChunk = true;
-      }
+			if (!BETH_GLOBAL_RENDER_CACHE.sentFirstChunk) {
+				withScript = swapScript + withScript;
+				BETH_GLOBAL_RENDER_CACHE.sentFirstChunk = true;
+			}
 
-      BETH_GLOBAL_RENDER_CACHE.streamController?.enqueue(withScript);
+			BETH_GLOBAL_RENDER_CACHE.streamController?.enqueue(withScript);
 
-      BETH_GLOBAL_RENDER_CACHE.checkIfEndAndClose();
-    }, 0);
-  });
-  return fallback;
+			BETH_GLOBAL_RENDER_CACHE.checkIfEndAndClose();
+		}, 0);
+	});
+	return fallback;
 }

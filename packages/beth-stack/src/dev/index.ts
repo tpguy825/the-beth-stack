@@ -1,11 +1,11 @@
 export function liveReloadScript({
-  debounceTime = 100,
-  url = "ws://localhost:3001/ws",
+	debounceTime = 100,
+	url = "ws://localhost:3001/ws",
 }: {
-  url?: string;
-  debounceTime?: number;
+	url?: string;
+	debounceTime?: number;
 } = {}): string {
-  return `
+	return `
         let reloadTimeout;
         (function () {
           let socket = new WebSocket(\"${url}\");
