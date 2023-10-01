@@ -15,7 +15,7 @@ const config = {
 		project: [
 			"./tsconfig.json",
 			"./packages/create-beth-app/tsconfig.eslint.json", // separate eslint config for the CLI since we want to lint and typecheck differently due to template files
-			// "./packages/beth-stack/tsconfig.json",
+			"./packages/beth-stack/tsconfig.json",
 			// "./upgrade/tsconfig.json",
 			"./www/tsconfig.json",
 		],
