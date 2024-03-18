@@ -17,8 +17,10 @@ export const main = () => {
     program.parse(process.argv);
 
     const options = program.opts();
+    const args = program.args;
+    const projectName = args[0];
 
-    if (!options.projectName) {
+    if (!projectName) {
       spinner.stop();
       logger.error(
         'Error: No Project Name specified. Please include "--project-name <project-name>"',
@@ -27,14 +29,14 @@ export const main = () => {
     }
 
     spinner.stop();
-    logger.warning(`Creating new beth-stack site at ./${options.projectName}`);
+    logger.warning(`Creating new beth-stack site at ./${projectName}`);
 
     Bun.spawnSync(
       [
         "git",
         "clone",
         "https://github.com/ethanniser/beth-big.git",
-        options.projectName,
+        projectName,
       ],
       {
         onExit(subprocess, exitCode, signalCode, error) {
@@ -46,11 +48,11 @@ export const main = () => {
       },
     );
 
-    sh.cd(options.projectName);
+    sh.cd(projectName);
 
     // Replace all instances of template name with new project name
     sh.ls("package.json").forEach((file: string) => {
-      sh.sed("-i", '"test"', `"${options.projectName}"`, file);
+      sh.sed("-i", '"test"', `"${projectName}"`, file);
     });
 
     // Remove the .git folder

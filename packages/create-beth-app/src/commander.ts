@@ -1,5 +1,6 @@
 import { Command } from "commander";
 
+
 export const program = new Command();
 
 program
@@ -7,7 +8,7 @@ program
   .option("-n", "--node", "use the node template")
   .option("-njs", "--nextjs", "use the nextjs template")
   .option("-rn", "--react-native", "use the react-native template")
-  .option("-p --project-name <project-name>")
+  .argument("<name>", "the name of the project")
   .option("-b", "--bun", "run with bun")
   .option("-y", "--yarn", "run with yarn")
   .option("-npm", "--npm", "run with npm");
