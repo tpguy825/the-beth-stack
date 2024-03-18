@@ -1,33 +1,33 @@
 #!/usr/bin/env bun
 import sh from "shelljs";
+import { displayCLIHeader } from "./asciiArt.js";
 import { colors } from "./colors.js";
 import { program } from "./commander.js";
+import { logger } from "./utils/logger.js";
+import { Spinner } from "./utils/spinner.js";
 
 export const main = () => {
+  displayCLIHeader();
+  const spinner = new Spinner();
   try {
     console.log(colors.info("\nStarting..."));
     console.log(colors.info("Running Pre-checks..."));
-
+    spinner.start("Initializing...");
     // Read params from cli
     program.parse(process.argv);
 
     const options = program.opts();
 
     if (!options.projectName) {
-      console.log(
-        colors.error(
-          'Error: No Project Name specified. Please include "--project-name <project-name>"',
-        ),
+      spinner.stop();
+      logger.error(
+        'Error: No Project Name specified. Please include "--project-name <project-name>"',
       );
-
       sh.exit(0);
     }
 
-    console.log(
-      colors.warning(
-        `Creating new beth-stack site at ./${options.projectName}`,
-      ),
-    );
+    spinner.stop();
+    logger.warning(`Creating new beth-stack site at ./${options.projectName}`);
 
     Bun.spawnSync(
       [
@@ -56,6 +56,8 @@ export const main = () => {
     // Remove the .git folder
     sh.exec(`rm -rf .git`);
 
+    spinner.start("Installing dependencies...");
+
     Bun.spawnSync(["bun", "install"], {
       onExit(subprocess, exitCode, signalCode, error) {
         if (exitCode !== 0) {
@@ -66,20 +68,20 @@ export const main = () => {
     });
 
     // Print our done message
-    console.log(colors.info.bold("Complete! 🎉"));
+    spinner.stop();
+    console.log(colors.success.bold("Complete! 🎉"));
   } catch (error) {
-    console.error(
-      colors.error(
-        `Uh oh - Something happened, please create an issue here: \n\nhttps://github.com/lundjrl/repo-cli`,
-      ),
+    spinner.stop();
+    logger.error(
+      `Uh oh - Something happened, please create an issue here: \n\nhttps://github.com/lundjrl/repo-cli`,
     );
   } finally {
-    console.log(
-      "this cli is extremely new and barebones, contributions are welcome",
+    logger.info(
+      "This CLI is extremely new and barebones, contributions are welcome.",
     );
-    console.log("https://github.com/ethanniser/the-beth-stack");
-    console.log("looking for help? open an issue or ask in the discord");
-    console.log("Ethan's Discord: https://discord.gg/Z3yUtMfkwa");
+    logger.info("https://github.com/ethanniser/the-beth-stack");
+    logger.info("Looking for help? Open an issue or ask in the discord.");
+    logger.info("Ethan's Discord: https://discord.gg/Z3yUtMfkwa");
   }
 };
 
